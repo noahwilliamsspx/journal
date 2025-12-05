@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journal Prompt Generator</title>
+
+  <!-- Google Fonts: Patrick Hand -->
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      overflow: hidden;
+      cursor: default;
+      background: linear-gradient(120deg, #a3c4f3, #bde0c2, #d6cadd, #f7ede2);
+      background-size: 400% 400%;
+      animation: gradientShift 30s ease infinite;
+      font-family: 'Patrick Hand', cursive;
+      color: black;
+      text-align: center;
+      padding: 20px;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 50% 50%; }
+      50% { background-position: 100% 50%; }
+      75% { background-position: 50% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .clickable-text {
+      color: black;
+      font-size: 3rem;
+      font-weight: normal;
+      text-transform: uppercase;
+      -webkit-text-stroke: 1px #333;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s;
+      padding: 0 20px;
+      margin-bottom: 40px;
+    }
+
+    .clickable-text:hover {
+      transform: scale(1.05);
+    }
+
+    .prompt-box {
+      font-size: 1.8rem;
+      line-height: 1.6;
+      max-width: 90%;
+      word-wrap: break-word;
+      padding: 20px 30px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: opacity 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="clickable-text" onclick="generatePrompt()">
+    Generate Prompt
+  </div>
+
+  <div class="prompt-box" id="promptDisplay">
+    Click the button above to get a journaling prompt.
+  </div>
+
+  <script>
+    const prompts = [
+      // Original prompts
+      "Write about a time you felt happy",
+      "What do you want to get out of journaling?",
+      "What is your favorite self-care activity?",
+      "What is something you don't do enough of?",
+      "Write about one of your short-term goals",
+      "Who do you trust the most? Talk about them and why.",
+      "What part of the day do you most enjoy?",
+      "What three things are you most grateful for?",
+      "What was something that made you smile today?",
+      "What are your career ambitions?",
+      "What is your favorite book? Why?",
+      "What values do you consider most important in life?",
+      "Talk about some hobbies you want to try. List at least three!",
+      "What is one thing about yourself that you would change if you could?",
+      "What is one thing about yourself that you would never change!",
+      "What is your biggest achievement ever?",
+      "What is something you have changed your opinion on in the past? What led you to change that opinion?",
+      "What is your biggest fear?",
+      "What is your favorite positive affirmation and why?",
+      "Describe your perfect day",
+      "Which is your favorite season? Why?",
+      "What are five things that make you happy?",
+      "What is your favorite outdoor activity?",
+      "What are five things that inspire or motivate you.",
+      "What career did you want when you were younger? Did you pursue that?",
+      "Do you make time for yourself each day? If so, how? If not, how can you start to do this?",
+      "If you could go back and give your 15-year-old self one piece of advice, what would it be?",
+      "Which is your favorite holiday/tradition? Why?",
+      "What is something you want to achieve in the next 5 years.",
+      "How are your goals similar and different to your goals from 5 years ago?",
+      "If you didn't have to ever worry about money, what would you do tomorrow?",
+      "Talk about three people in your life you are grateful for.",
+      "How can you be more creative in everyday life?",
+      "What are some ideas for getting out of your comfort zone?",
+      "Who are three famous people you admire. Why?",
+      "What do you look forward to most in the future?",
+      "What is your favorite movie? Why?",
+      "Are you different or similar to your parents/guardians? In what ways?",
+      "Dear past me...",
+      "What are three things you value most in a friend?",
+      "Do you feel judged by others around you?",
+      "How much do you use social media? Does it affect you at all?",
+      "What is one area of your life you would like to improve? How could you do that?",
+      "What was your first job? Does it differ from what you are doing now?",
+      "When was the last time you took a break from work? What do you like to do on your days off?",
+      "Do you put yourself or others first in situations?",
+      "What can you learn from your mistakes?",
+      "What is your favorite quote?",
+      "Do you think you are a spontaneous person? Would you change that about yourself in any way?",
+      "How do you feel when making big decisions?",
+
+      // 100 new mental health prompts
+      "How are you feeling emotionally today?",
+      "Describe a safe space where you feel calm.",
+      "What thoughts tend to stress you out the most?",
+      "List three coping strategies you use when anxious.",
+      "Write about a recent moment when you felt at peace.",
+      "How do you show yourself kindness?",
+      "What triggers negative self-talk for you?",
+      "Describe one way you can practice mindfulness today.",
+      "What emotions do you often avoid feeling?",
+      "How do you express gratitude in your life?",
+      "Write about a time you overcame a mental challenge.",
+      "List five things that help you relax.",
+      "What does self-care mean to you?",
+      "Describe a recent success, no matter how small.",
+      "What boundaries do you need to set in your life?",
+      "Write about a time you felt supported by someone.",
+      "How do you manage stress in your daily routine?",
+      "Describe a habit that improves your mental health.",
+      "What negative thought patterns do you notice in yourself?",
+      "Write a letter of encouragement to your past self.",
+      "What emotions do you struggle to accept?",
+      "List three ways to nurture your mental well-being.",
+      "Describe a time you practiced forgiveness, for yourself or someone else.",
+      "What does it feel like when you’re truly calm?",
+      "How do you cope with uncertainty?",
+      "Write about a self-care ritual you enjoy.",
+      "What small victories are you proud of today?",
+      "How do you manage your energy throughout the day?",
+      "Describe a coping skill that works well for you.",
+      "What are your go-to strategies for calming your mind?",
+      "Write about a time you felt resilient.",
+      "How do you deal with negative thoughts?",
+      "What is one thing that makes you feel safe?",
+      "List three affirmations that help you feel grounded.",
+      "Write about a time when you let go of something harmful.",
+      "How do you recharge after feeling drained?",
+      "Describe a moment when you felt emotionally balanced.",
+      "Write about someone who lifts your mood.",
+      "What are your favorite ways to practice self-compassion?",
+      "What worries do you carry most often?",
+      "Describe your ideal mental health day.",
+      "How do you celebrate your own progress?",
+      "Write about a time you felt emotionally strong.",
+      "What are some habits that support your mental clarity?",
+      "Describe a place where you feel safe and calm.",
+      "What emotions do you feel most often?",
+      "Write about something you released recently.",
+      "List three ways you can calm your mind in the next hour.",
+      "What role does mindfulness play in your life?",
+      "How do you express your emotions safely?",
+      "Write about a coping mechanism you want to strengthen.",
+      "Describe a moment of self-reflection that helped you.",
+      "How do you manage feelings of overwhelm?",
+      "What are three things you appreciate about yourself?",
+      "Describe a time when you overcame anxiety or fear.",
+      "How do you maintain mental balance during stress?",
+      "Write about an emotion you’re learning to understand better.",
+      "What is your favorite way to unwind?",
+      "List three things you do to protect your mental health.",
+      "How do you handle criticism or judgment?",
+      "Describe a recent moment when you felt relaxed.",
+      "What internal dialogue helps you feel calm?",
+      "Write about a time when you felt emotionally safe.",
+      "List three ways to practice patience with yourself.",
+      "Describe how your mood changes throughout the week.",
+      "What boundaries do you need to maintain for your well-being?",
+      "Write about a time you nurtured your mental health.",
+      "How do you prevent burnout?",
+      "Describe a ritual that helps you reset mentally.",
+      "What self-care habits would you like to adopt?",
+      "Write about an activity that brings you joy and calm.",
+      "How do you practice self-love on difficult days?",
+      "Describe a time you felt mentally resilient.",
+      "What does emotional healing mean to you?",
+      "List three thoughts that help reduce anxiety.",
+      "Write about a mental health goal you have.",
+      "Describe a time you were proud of your emotional growth.",
+      "What strategies help you stay present?",
+      "How do you manage feelings of sadness?",
+      "Write about a practice that helps you feel grounded.",
+      "List three positive mental health habits you already have.",
+      "Describe a coping strategy that works well in social situations.",
+      "What role does rest play in your mental health?",
+      "Write about a time you acknowledged your feelings without judgment.",
+      "Describe a moment when you felt inner peace.",
+      "What affirmations help you feel confident and calm?",
+      "List three ways to improve your emotional self-awareness.",
+      "Write about a mental health challenge you’ve overcome.",
+      "How do you manage racing thoughts?",
+      "Describe a way you can improve your emotional resilience.",
+      "What is a recent moment that boosted your mood?",
+      "Write about a hobby that helps your mental well-being.",
+      "Describe how music, art, or nature impacts your emotions.",
+      "What self-talk helps you feel grounded and safe?",
+      "List three ways to calm your mind when anxious.",
+      "Write about a recent moment of personal growth.",
+      "How do you stay motivated to maintain mental wellness?",
+      "Describe a moment when you felt emotionally connected to someone.",
+      "What techniques help you manage stress in daily life?",
+      "Write about a recent moment when you felt emotionally supported.",
+      "Describe how journaling helps your mental health.",
+      "What does inner peace look like for you?",
+      "List three ways to practice emotional self-care today.",
+      "Write about a time you felt proud of how you handled a difficult emotion.",
+      "Describe a daily habit that supports your mental health."
+    ];
+
+    function generatePrompt() {
+      const randomIndex = Math.floor(Math.random() * prompts.length);
+      document.getElementById('promptDisplay').textContent = prompts[randomIndex];
+    }
+  </script>
+
+</body>
+</html>
